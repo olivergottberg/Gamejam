@@ -66,7 +66,6 @@ public class PlayerController : MonoBehaviour
         rb.simulated = false;
 
         Debug.Log("Britney hit a hazard.");
-        Debug.Log(IsGrounded());
     }
 
     private void OnDrawGizmosSelected()
