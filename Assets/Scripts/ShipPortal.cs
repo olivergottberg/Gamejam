@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ShipPortal : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
     private bool activated;
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -17,5 +18,6 @@ public class ShipPortal : MonoBehaviour
 
         activated = true;
         player.EnterShipMode();
+        gameManager.PlayToxicTrack();
     }
 }

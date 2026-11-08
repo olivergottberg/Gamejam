@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
+    private bool isPlaying;
+
     private enum MovementMode
     {
         Runner,
@@ -54,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDead)
+        if (isDead || !isPlaying)
             return;
 
         Vector2 velocity = rb.linearVelocity;
@@ -91,8 +94,10 @@ public class PlayerController : MonoBehaviour
     // PlayerInput calls this because the Input Action is named "Jump".
     public void OnJump()
     {
-        if (!isDead && movementMode == MovementMode.Runner)
-            jumpBufferRemaining = jumpBufferSeconds;
+        if (isDead || !isPlaying || movementMode != MovementMode.Runner)
+            return;
+
+        jumpBufferRemaining = jumpBufferSeconds;
     }
 
     public void EnterShipMode()
@@ -126,11 +131,24 @@ public class PlayerController : MonoBehaviour
         if (isDead || !other.CompareTag("Hazards"))
             return;
 
+        Debug.Log("Britney hit a hazard.");
+        gameManager.PlayerDied();
+    }
+
+    public void BeginRun()
+    {
+        isDead = false;
+        isPlaying = true;
+        rb.simulated = true;
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    public void StopForEnd()
+    {
         isDead = true;
+        isPlaying = false;
         rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
-
-        Debug.Log("Britney hit a hazard.");
     }
 
     private void OnDrawGizmosSelected()
